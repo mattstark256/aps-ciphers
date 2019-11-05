@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScytaleCipher
+namespace RailFenceCipher
 {
     class Program
     {
         static void Main()
         {
-            Console.WriteLine("Matt's Scytale Cipher Program");
+            Console.WriteLine("Matt's Rail Fence Cipher Program");
 
             while (true)
             {
@@ -36,27 +36,28 @@ namespace ScytaleCipher
 
         static void EncodeMessage()
         {
-            Console.WriteLine("\nPlease enter a number representing the scytale circumference");
-            int circumference = GetNumericInput();
+            Console.WriteLine("\nPlease enter a number representing the fence height");
+            int fenceHeight = GetNumericInput();
             Console.WriteLine("\nPlease enter the message to be encoded.");
             string message = Console.ReadLine();
 
             string encodedMessage = "";
-            int width = (int)Math.Ceiling((float)message.Length / circumference);
 
-            for (int i = 0; i < width; i++)
+            for (int row = 0; row < fenceHeight; row++)
             {
-                for (int j = 0; j < circumference; j++)
+                int j = 0;
+                while (true)
                 {
-                    int pos = j * width + i;
-                    if (pos >= message.Length)
+                    j += row;
+                    if (j >= message.Length) break;
+                    encodedMessage += message[j];
+                    j += (fenceHeight - 1 - row) * 2;
+                    if (j >= message.Length) break;
+                    if (row != 0 && row != fenceHeight - 1)
                     {
-                        encodedMessage += " ";
+                        encodedMessage += message[j];
                     }
-                    else
-                    {
-                        encodedMessage += message[pos];
-                    }
+                    j += row;
                 }
             }
 
@@ -67,27 +68,31 @@ namespace ScytaleCipher
 
         static void DecodeMessage()
         {
-            Console.WriteLine("\nPlease enter a number representing the scytale circumference");
-            int circumference = GetNumericInput();
+            Console.WriteLine("\nPlease enter a number representing the fence height");
+            int fenceHeight = GetNumericInput();
             Console.WriteLine("\nPlease enter the message to be decoded.");
             string message = Console.ReadLine();
 
-            string decodedMessage = "";
-            int width = (int)Math.Ceiling((float)message.Length / circumference);
+            string decodedMessage = message;
 
-            for (int j = 0; j < circumference; j++)
+            int characterIndex = 0;
+            for (int row = 0; row < fenceHeight; row++)
             {
-                for (int i = 0; i < width; i++)
+                int j = 0;
+                while (true)
                 {
-                    int pos = i * circumference + j;
-                    if (pos >= message.Length)
+                    j += row;
+                    if (j >= message.Length) break;
+                    decodedMessage = decodedMessage.Remove(j, 1).Insert(j, message[characterIndex].ToString());
+                    characterIndex++;
+                    j += (fenceHeight - 1 - row) * 2;
+                    if (j >= message.Length) break;
+                    if (row != 0 && row != fenceHeight - 1)
                     {
-                        decodedMessage += " ";
+                        decodedMessage = decodedMessage.Remove(j, 1).Insert(j, message[characterIndex].ToString());
+                        characterIndex++;
                     }
-                    else
-                    {
-                        decodedMessage += message[pos];
-                    }
+                    j += row;
                 }
             }
 
